@@ -1,16 +1,13 @@
-Supervisor
-==========
+# Supervisor
 
 Supervisor is the ultimate lightweight plugin for debugging your Bukkit server. With its extensive API developers can easily hook into Supervisor to add 
 more debuggable data to be provided when their users are prompted.
 
-Usage
----
+## Usage
 With simplicity and lightweight being in mind, Supervisor only functions when you prompt it to, using the `svreport` command _short for 
 Supervisor Report_.
 
-API
----
+## API
 An API is meant to be immutable, and that's what Supervisor provides. A simple and straight-to-the-point API that won't change once written.
 
 In the following scenario, we will assume you just finished writing your awesome item-dropping plugin called **ItemDropper!** To hook into Supervisor
@@ -43,8 +40,7 @@ public class ItemDropperPlugin ... {
 
 And voilà! You just hooked into Supervisor... FOREVER!
 
-Contributing
-------------
+## Contributing
 * **This project is written in Java 7.**  Make sure to mark methods with
   ` @Override` that override methods of parent classes, or that implement
   methods of interfaces (Java 7).
@@ -54,8 +50,7 @@ Contributing
 * **Test your code!!**
 * **Use English-US dictionary** Color instead of Colour, Armor instead of Armour.
 
-Example
--------
+## Example
 This is **GOOD:**
 
     if (var.func(param1, param2)) {
