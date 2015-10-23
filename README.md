@@ -42,6 +42,12 @@ public class ItemDropperPlugin ... {
 
 And voilà! You just hooked into Supervisor... FOREVER!
 
+## Building
+
+To build this project simply execute the following maven command `mvn clean package`.
+
+If you are unable to build this project, please contact SupaHam through [https://www.supaham.com/contact/](https://www.supaham.com/contact/)
+
 ## Contributing
 * **This project is written in Java 7.**  Make sure to mark methods with
   ` @Override` that override methods of parent classes, or that implement
