@@ -1,5 +1,7 @@
 package com.supaham.supervisor.contexts;
 
+import com.google.common.base.CaseFormat;
+
 import com.supaham.commons.bukkit.utils.LocationUtils;
 import com.supaham.commons.utils.MapBuilder;
 import com.supaham.supervisor.report.ReportSpecs.ReportLevel;
@@ -9,12 +11,25 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class WorldsContext extends SimpleContext {
+
+    private static final Map<EntityType, String> entityTypeToName = new HashMap<>();
+
+    static {
+        String prefix = "minecraft:";
+        for (EntityType entityType : EntityType.values()) {
+            if (entityType.getName() != null) {
+                entityTypeToName.put(entityType, prefix + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, entityType.getName()));
+            }
+        }
+    }
 
     public WorldsContext() {
         super("world", "Worlds");
@@ -55,8 +70,9 @@ public class WorldsContext extends SimpleContext {
         } else {
             HashMap<String, Integer> map = new HashMap<>();
             for (Entity entity : world.getEntities()) {
-                Integer integer = map.get(entity.getName());
-                map.put(entity.getName(), integer != null ? integer : 1);
+                String name = entityTypeToName.get(entity.getType());
+                Integer integer = map.get(name);
+                map.put(name, integer != null ? integer : 1);
             }
             return map;
         }
