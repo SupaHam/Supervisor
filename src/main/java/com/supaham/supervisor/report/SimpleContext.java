@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
 /**
  * Represents a simple Key/Value List report.
  */
-public abstract class SimpleContext implements Context {
+public abstract class SimpleContext implements Context, ContextComparable {
 
     private final String name;
     private final String title;
@@ -130,6 +130,10 @@ public abstract class SimpleContext implements Context {
     
     @Nonnull @Override public String getTitle() {
         return title;
+    }
+
+    @Override public int compareTo(@Nonnull Context o) {
+        return getName().compareTo(o.getName());
     }
 
     /**

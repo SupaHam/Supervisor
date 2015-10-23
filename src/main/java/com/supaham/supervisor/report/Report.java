@@ -57,30 +57,24 @@ public class Report implements List<Context>, Callable<ReportResult> {
         Object output;
         OutputFormat format = this.reportSpecs.getFormat();
 
-        ReportMetadataContext metadata = new ReportMetadataContext();
+        ReportMetadataContext metadataContext = new ReportMetadataContext();
         List<Context> contexts = new ArrayList<>(this.list);
-        contexts.add(metadata); // Silently register ReportMetadataContext here for tracking data
 
         for (Context context : contexts) {
             _setup(context);
         }
+        
         if (format.equals(OutputFormat.PRETTY_TXT)) {
             if (!contexts.isEmpty()) {
                 StringBuilder builder = new StringBuilder();
                 for (Context context : contexts) {
-                    context.run();
-                    builder.append("================================\n")
-                        .append(context.getTitle()).append(" (").append(context.getName()).append(")")
-                        .append("\n================================")
-                        .append("\n\n");
-                    try {
-                        builder.append(context.output());
-                    } catch (Exception e) {
-                        builder.append("ERROR OCCURRED WHEN GETTING CONTEXT OUTPUT, CHECK CONSOLE!");
-                        SupervisorPlugin.log().log(Level.SEVERE, e.getMessage(), e);
-                    }
-                    builder.append("\n\n");
+                    builder.append(contextToPrettyString(context));
                 }
+                // Handle ReportMetadataContext, make sure to add it to the beginning of the JSON for readability purposes.
+                _setup(metadataContext);
+                builder.insert(0, contextToPrettyString(metadataContext));
+                _destroy(metadataContext);
+                
                 output = builder.toString();
             } else {
                 output = "No reports.";
@@ -89,21 +83,13 @@ public class Report implements List<Context>, Callable<ReportResult> {
             Gson gson = ((JSONFormat) format).getGson();
             JSONArray root = new JSONArray();
             for (Context context : contexts) {
-                context.run();
-                JsonObject obj = new JsonObject();
-                obj.addProperty("name", context.getName());
-                obj.addProperty("title", context.getTitle());
-                // Output reportLevel if specified for the context
-                if (reportSpecs.getContextReportLevels().containsKey(context.getName())) {
-                    obj.addProperty("reportLevel", reportSpecs.getContextReportLevels().get(context.getName()));
-                }
-                try {
-                    obj.add("data", gson.toJsonTree(context.output()));
-                } catch (Exception e) {
-                    SupervisorPlugin.log().log(Level.SEVERE, e.getMessage(), e);
-                }
-                root.add(obj);
+                root.add(contextToJson(gson, context));
             }
+            // Handle ReportMetadataContext, make sure to add it to the beginning of the JSON for readability purposes.
+            _setup(metadataContext);
+            root.add(0, contextToJson(gson, metadataContext));
+            _destroy(metadataContext);
+            
             output = gson.toJson(root);
         } else {
             for (Context context : contexts) {
@@ -115,7 +101,7 @@ public class Report implements List<Context>, Callable<ReportResult> {
             _destroy(context);
         }
 
-        return new ReportResult(this.reportSpecs, output, metadata.startMillis, metadata.endMillis, metadata.durationNanos);
+        return new ReportResult(this.reportSpecs, output, metadataContext.startMillis, metadataContext.endMillis, metadataContext.durationNanos);
     }
 
     private void _setup(Context context) {
@@ -124,7 +110,6 @@ public class Report implements List<Context>, Callable<ReportResult> {
             simple.reportSpecs = this.reportSpecs;
             simple.entries = new ArrayList<>();
         }
-
     }
 
     private void _destroy(Context context) {
@@ -133,6 +118,40 @@ public class Report implements List<Context>, Callable<ReportResult> {
             simple.reportSpecs = null;
             simple.entries = null;
         }
+    }
+    
+    private String contextToPrettyString(Context context) {
+        context.run();
+        StringBuilder builder = new StringBuilder();
+        builder.append("================================\n")
+            .append(context.getTitle()).append(" (").append(context.getName()).append(")")
+            .append("\n================================")
+            .append("\n\n");
+        try {
+            builder.append(context.output());
+        } catch (Exception e) {
+            builder.append("ERROR OCCURRED WHEN GETTING CONTEXT OUTPUT, CHECK CONSOLE!");
+            SupervisorPlugin.log().log(Level.SEVERE, e.getMessage(), e);
+        }
+        builder.append("\n\n");
+        return builder.toString();
+    }
+    
+    private JsonObject contextToJson(Gson gson, Context context) {
+        JsonObject obj = new JsonObject();
+        obj.addProperty("name", context.getName());
+        obj.addProperty("title", context.getTitle());
+        // Output reportLevel if specified for the context
+        if (reportSpecs.getContextReportLevels().containsKey(context.getName())) {
+            obj.addProperty("reportLevel", reportSpecs.getContextReportLevels().get(context.getName()));
+        }
+        context.run();
+        try {
+            obj.add("data", gson.toJsonTree(context.output()));
+        } catch (Exception e) {
+            SupervisorPlugin.log().log(Level.SEVERE, e.getMessage(), e);
+        }
+        return obj;
     }
 
     @Override public String toString() {
@@ -311,6 +330,10 @@ public class Report implements List<Context>, Callable<ReportResult> {
                     .put("includes", getReportSpecs().getIncludes())
                     .build()
             );
+        }
+
+        @Override public int compareTo(@Nonnull Context o) {
+            return 1;
         }
     }
 }

@@ -54,7 +54,7 @@ public class SupervisorPlugin extends SimpleCommonPlugin<SupervisorPlugin> {
 
     public static Report createReport(ReportSpecs specs) {
         Report report = new Report(specs);
-        report.addAll(specs.getContextRegistry().getContexts());
+        report.addAll(specs.getContextRegistry().getSortedContexts());
         return report;
     }
 
