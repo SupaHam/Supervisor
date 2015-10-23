@@ -101,7 +101,6 @@ public class ContextRegistry {
                     return 1;
                 } else {
                     int compare = ContextComparator.INSTANCE.compare(o1.context, o2.context);
-                    System.out.println(o1.context.getName() + " vs " +  o2.context.getName() + "    " + compare);
                     return compare;
                 }
             }
