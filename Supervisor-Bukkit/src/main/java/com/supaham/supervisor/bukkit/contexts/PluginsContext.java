@@ -34,7 +34,7 @@ public class PluginsContext extends ReportContext {
             .put("name", desc.getName())
             .put("version", desc.getVersion())
             .put("main", desc.getMain())
-            .put("author", desc.getAuthors())
+            .put("authors", desc.getAuthors())
             .put("description", desc.getDescription())
             .put("website", desc.getWebsite())
             .put("prefix", desc.getPrefix())
