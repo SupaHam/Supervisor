@@ -1,3 +1,4 @@
+[![Build Status](https://ci.drtshock.net/view/All/job/Supervisor/badge/icon)](https://ci.drtshock.net/view/All/job/Supervisor/)
 # Supervisor
 
 Supervisor is the ultimate lightweight plugin for debugging your Bukkit server. With its extensive API developers can easily hook into Supervisor to add 
@@ -7,7 +8,7 @@ more debuggable data to be provided when their users are prompted.
 With simplicity and lightweight being in mind, Supervisor only functions when you prompt it to, using the `svreport` command _short for 
 Supervisor Report_.
 
-[Here](https://gist.github.com/anonymous/ce685479dcfb281c06ac)'s an example of a JSON report outputted in JSON format instantly shared using the Gist service!
+[Here](https://gist.github.com/anonymous/450605c76428f1a72326)'s an example of a JSON report outputted in JSON format instantly shared using the Gist service!
 
 ## API
 An API is meant to be immutable, and that's what Supervisor provides. A simple and straight-to-the-point API that won't change once written.
@@ -40,7 +41,7 @@ public class ItemDropperPlugin ... {
 }
 ```
 
-And voil‡! You just hooked into Supervisor... FOREVER!
+And voil√†! You just hooked into Supervisor... FOREVER!
 
 ## Building
 

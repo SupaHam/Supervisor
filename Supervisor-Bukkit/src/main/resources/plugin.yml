@@ -1,0 +1,6 @@
+name: "${plugin.name}"
+main: "${main.class}"
+version: "${version}"
+load: STARTUP
+authors: [SupaHam]
+website: http://github.com/SupaHam/Supervisor

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.supaham.supervisor</groupId>
+        <artifactId>supervisor-parent</artifactId>
+        <version>1.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>supervisor-bukkit</artifactId>
+    <name>Supervisor-Bukkit</name>
+    
+    <properties>
+        <plugin.name>Supervisor</plugin.name>
+        <main.package>com.supaham.supervisor.bukkit</main.package>
+        <main.class>${main.package}.SupervisorPlugin</main.class>
+        <core.version>1.0-SNAPSHOT</core.version>
+        <spigot-api.version>1.8.7-R0.1-SNAPSHOT</spigot-api.version>
+        <commons-bukkit.version>0.4.1-SNAPSHOT</commons-bukkit.version>
+        <exhaust-bukkit.version>1.0.1-SNAPSHOT</exhaust-bukkit.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+        </repository>
+        <!--<repository>
+            <id>ellune-repo</id>
+            <url>http://repo.ellune.net/content/groups/public/</url>
+        </repository>-->
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.supaham.supervisor</groupId>
+            <artifactId>supervisor-core</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>${spigot-api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.supaham.commons</groupId>
+            <artifactId>commons-bukkit</artifactId>
+            <version>${commons-bukkit.version}</version>
+        </dependency>
+        <!--<dependency>
+            <groupId>lc.vq</groupId>
+            <artifactId>exhaust-bukkit</artifactId>
+            <version>${exhaust-bukkit.version}</version>
+        </dependency>-->
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <includes>
+                                    <include>com.supaham.supervisor:supervisor-core</include>
+                                    <include>com.supaham.commons:commons-bukkit</include>
+                                    <include>ninja.leaping.configurate:configurate-core</include>
+                                    <include>ninja.leaping.configurate:configurate-hocon</include>
+                                    <include>com.dumptruckman.minecraft.pluginbase:Plugin-Bukkit</include>
+                                </includes>
+                            </artifactSet>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <targetPath>.</targetPath>
+                <filtering>true</filtering>
+                <directory>${basedir}/src/main/resources/</directory>
+            </resource>
+        </resources>
+    </build>
+
+</project>
