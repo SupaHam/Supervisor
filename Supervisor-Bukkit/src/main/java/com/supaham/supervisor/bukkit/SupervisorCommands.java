@@ -54,8 +54,8 @@ public class SupervisorCommands {
         excludesString = StringUtils.stripToNull(excludesString);
         includesString = StringUtils.stripToNull(includesString);
 
-        List<String> excludes = excludesString == null ? Collections.<String>emptyList() : Arrays.asList(excludesString.split("\\s+"));
-        List<String> includes = includesString == null ? Collections.<String>emptyList() : Arrays.asList(includesString.split("\\s+"));
+        List<String> excludes = excludesString == null ? Collections.<String>emptyList() : Arrays.asList(excludesString.split("\\s+|,"));
+        List<String> includes = includesString == null ? Collections.<String>emptyList() : Arrays.asList(includesString.split("\\s+|,"));
 
         ReportSpecsBuilder builder = plugin.createDefaultBuilder().excludes(excludes).includes(includes);
         if (title != null) {
