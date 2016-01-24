@@ -2,6 +2,7 @@ package com.supaham.supervisor;
 
 import com.google.common.base.Preconditions;
 
+import com.supaham.commons.utils.CollectionUtils;
 import com.supaham.supervisor.report.OutputFormat;
 import com.supaham.supervisor.report.Report;
 import com.supaham.supervisor.report.ReportContext;
@@ -31,6 +32,14 @@ public class Supervisor {
     public static Report createReport(ReportSpecifications specs) {
         Report report = new Report(specs);
         for (ReportContext reportContext : specs.getContextRegistry().getSortedContexts()) {
+            // If exclusions include this context, ignore it.
+            if (CollectionUtils.containsIgnoreCase(specs.getExcludes(), reportContext.getName())) {
+               continue; 
+            }
+            // If inclusions were defined and this context is not within the inclusions, ignore it.
+            if (!specs.getIncludes().isEmpty() && !CollectionUtils.containsIgnoreCase(specs.getIncludes(), reportContext.getName())) {
+                continue;
+            }
             report.add(reportContext.createEntry(specs));
         }
         return report;
