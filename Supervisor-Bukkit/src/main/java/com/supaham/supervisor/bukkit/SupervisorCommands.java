@@ -19,6 +19,7 @@ public class SupervisorCommands {
 
     @Command(aliases = {"svreport", "sv"}, desc = "Generates a Supervisor report.")
     public void svreport(CommandSender sender,
+    public void svreport(CommandSender sender, @Optional @Text String argsString,
                          @Switch('v') boolean version,
                          @Switch('t') String title,
                          @Switch('f') String format,
@@ -30,6 +31,24 @@ public class SupervisorCommands {
             sender.sendMessage("Supervisor v" + plugin.getDescription().getVersion());
             return;
         }
+
+        String[] args = argsString == null ? new String[0] : argsString.split("\\s");
+        for (String arg : args) {
+            if ("reload".equals(arg.toLowerCase())) {
+                if (!sender.hasPermission("supervisor.reload")) {
+                    sender.sendMessage(ChatColor.RED + "You don't have permission.");
+                    return;
+                }
+
+                if (SupervisorPlugin.get().loadSettings()) {
+                    sender.sendMessage(ChatColor.GREEN + "You've successfully reloaded the Supervisor configuration file.");
+                } else {
+                    sender.sendMessage(ChatColor.RED + "Failed to load configuration. Please check the console for errors.");
+                }
+                return;
+            }
+        }
+
         excludesString = StringUtils.stripToNull(excludesString);
         includesString = StringUtils.stripToNull(includesString);
 

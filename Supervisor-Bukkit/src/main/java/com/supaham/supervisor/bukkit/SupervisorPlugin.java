@@ -24,13 +24,11 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.Callable;
 
 import javax.annotation.Nonnull;
 
 import pluginbase.config.datasource.yaml.YamlDataSource;
 import pluginbase.logging.PluginLogger;
-import pluginbase.plugin.Settings;
 
 /**
  * Created by Ali on 14/10/2015.
@@ -65,14 +63,9 @@ public class SupervisorPlugin extends SimpleCommonPlugin<SupervisorPlugin> {
 
     @Override public void onEnable() {
         super.onEnable();
-        YamlDataSource yaml;
-        try {
-            yaml = SerializationUtils.yaml(new File(getDataFolder(), "supervisor.yml")).build();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!loadSettings()) {
             return;
         }
-        SerializationUtils.loadOrCreateProperties(getLog(), yaml, this.settings);
 
         this.commandsManager = new SupervisorCommandsManager(this);
         this.contextRegistry = new BukkitContextRegistry();
@@ -84,6 +77,18 @@ public class SupervisorPlugin extends SimpleCommonPlugin<SupervisorPlugin> {
                 commandsManager.registerCommands();
             }
         }.start();
+    }
+    
+    public boolean loadSettings() {
+        YamlDataSource yaml;
+        try {
+            yaml = SerializationUtils.yaml(new File(getDataFolder(), "supervisor.yml")).build();
+            SerializationUtils.loadOrCreateProperties(getLog(), yaml, this.settings);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private void registerDefaultContexts() {
