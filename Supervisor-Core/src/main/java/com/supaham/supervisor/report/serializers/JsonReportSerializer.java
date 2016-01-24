@@ -27,7 +27,7 @@ public class JsonReportSerializer extends AbstractReportSerializer {
 
     private static final JSONFormat OUTPUT_FORMAT = OutputFormat.JSON;
     private JSONArray root;
-    private Map<String, String> files = new LinkedHashMap<>();
+    private Map<String, String> files;
 
     public JsonReportSerializer(Supervisor supervisor) {
         super(supervisor);
@@ -36,7 +36,8 @@ public class JsonReportSerializer extends AbstractReportSerializer {
     @Override
     protected boolean pre(Report report) {
         if (super.pre(report)) {
-            root = new JSONArray();
+            this.root = new JSONArray();
+            this.files = new LinkedHashMap<>();
             return true;
         }
         return false;
@@ -46,6 +47,7 @@ public class JsonReportSerializer extends AbstractReportSerializer {
     protected void post() {
         super.post();
         this.root = null;
+        this.files = null;
     }
 
     @Override
