@@ -30,7 +30,7 @@ public class SupervisorCommandsManager extends CommandsManager {
         SupervisorPlugin.log().fine("Commands registered...");
     }
 
-    private static final class SupervisorExceptionConverter extends ExceptionConverterHelper {
+    public static final class SupervisorExceptionConverter extends ExceptionConverterHelper {
 
         @ExceptionMatch
         public void convert(SupervisorException e) throws CommandException {
