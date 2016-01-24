@@ -10,7 +10,7 @@ import java.util.List;
 public abstract class WorldsContext extends ReportContext {
 
     public WorldsContext() {
-        super("world", "Worlds");
+        super("world", "Worlds", "1");
     }
 
     protected abstract List<World> getWorlds(ReportContextEntry entry);

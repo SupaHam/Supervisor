@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 public class SystemPropertiesContext extends ReportContext {
 
     public SystemPropertiesContext() {
-        super("system-properties", "System Properties");
+        super("system-properties", "System Properties", "1");
     }
 
     @Override

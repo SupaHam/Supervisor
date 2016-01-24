@@ -20,7 +20,7 @@ import javax.annotation.Nonnull;
 public final class ReportMetadataContext extends ReportContext {
 
     public ReportMetadataContext() {
-        super("report-metadata", "Report Metadata");
+        super("report-metadata", "Report Metadata", "1");
     }
 
     @Override

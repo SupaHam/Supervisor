@@ -83,10 +83,10 @@ public class JsonReportSerializer extends AbstractReportSerializer {
         ReportSpecifications specs = report.getReportSpecifications();
 
         String name = contextEntry.getParentContext().getName();
-        String title = contextEntry.getParentContext().getTitle();
         JsonObject contextOutput = new JsonObject();
         contextOutput.addProperty("name", name);
-        contextOutput.addProperty("title", title);
+        contextOutput.addProperty("title", contextEntry.getParentContext().getTitle());
+        contextOutput.addProperty("version", contextEntry.getParentContext().getVersion());
 
         // Output reportLevel if specified for the context
         if (specs.getContextReportLevels().containsKey(name)) {

@@ -10,7 +10,7 @@ import java.util.Map.Entry;
 public abstract class ServerInfoContext extends ReportContext {
 
     public ServerInfoContext() {
-        super("server-info", "Server Information");
+        super("server-info", "Server Information", "1");
     }
 
     @Override

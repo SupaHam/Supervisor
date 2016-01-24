@@ -16,7 +16,7 @@ import java.util.List;
 public class PluginsContext extends ReportContext {
 
     public PluginsContext() {
-        super("plugins", "Plugins");
+        super("plugins", "Plugins", "1");
     }
 
     @Override public void run(ReportContextEntry entry) {

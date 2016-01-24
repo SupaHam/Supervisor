@@ -13,10 +13,12 @@ public class ReportContext implements ReportContextComparable {
 
     private final String name;
     private final String title;
+    private final String version;
 
-    public ReportContext(@Nonnull String name, @Nonnull String title) {
+    public ReportContext(@Nonnull String name, @Nonnull String title, @Nonnull String version) {
         this.name = StringUtils.checkNotNullOrEmpty(name, "name");
         this.title = StringUtils.checkNotNullOrEmpty(title, "title");
+        this.version = StringUtils.checkNotNullOrEmpty(version, "version");
     }
     /**
      * This method fires when a {@link Report} is requesting this context's data.
@@ -46,6 +48,11 @@ public class ReportContext implements ReportContextComparable {
     @Nonnull
     public String getTitle() {
         return title;
+    }
+
+    @Nonnull
+    public String getVersion() {
+        return version;
     }
 
     @Override

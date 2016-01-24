@@ -12,7 +12,7 @@ import javax.annotation.Nonnull;
 public class HelloWorldContext extends ReportContext {
 
     public HelloWorldContext() {
-        super("hello-world", "Hello World");
+        super("hello-world", "Hello World", "1");
     }
 
     @Override public void run(ReportContextEntry entry) {
