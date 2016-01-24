@@ -1,8 +1,10 @@
 package com.supaham.supervisor.bukkit;
 
 import com.sk89q.minecraft.util.commands.Command;
-import com.sk89q.minecraft.util.commands.CommandException;
+import com.sk89q.minecraft.util.commands.CommandPermissions;
 import com.sk89q.worldedit.util.command.binding.Switch;
+import com.sk89q.worldedit.util.command.binding.Text;
+import com.sk89q.worldedit.util.command.parametric.Optional;
 import com.supaham.commons.utils.StringUtils;
 import com.supaham.supervisor.SupervisorException;
 import com.supaham.supervisor.report.OutputFormat;
@@ -10,6 +12,7 @@ import com.supaham.supervisor.report.Report.ReportResult;
 import com.supaham.supervisor.report.ReportSpecifications.ReportSpecsBuilder;
 import com.supaham.supervisor.service.ReportServiceManager;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import java.util.Arrays;
@@ -18,8 +21,14 @@ import java.util.List;
 
 public class SupervisorCommands {
 
-    @Command(aliases = {"svreport", "sv"}, desc = "Generates a Supervisor report.")
-    public void svreport(CommandSender sender,
+    @Command(aliases = {"svreport", "sv"}, desc = "Generates a Supervisor report.", 
+        help = "-v displays version.\n" 
+            + "-t sets the report's title.\n" 
+            + "-f sets the output format of the report.\n" 
+            + "-e excludes named contexts from the report.\n" 
+            + "-i includes named contents in the report.\n" 
+            + "-l sets the report output level (verboseness).")
+    @CommandPermissions("supervisor.use")
     public void svreport(CommandSender sender, @Optional @Text String argsString,
                          @Switch('v') boolean version,
                          @Switch('t') String title,
@@ -30,7 +39,7 @@ public class SupervisorCommands {
         SupervisorPlugin plugin = SupervisorPlugin.get();
 
         if (version) {
-            sender.sendMessage("Supervisor v" + plugin.getDescription().getVersion());
+            sender.sendMessage(ChatColor.GREEN + "Supervisor v" + plugin.getDescription().getVersion());
             return;
         }
 
