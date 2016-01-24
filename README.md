@@ -17,14 +17,14 @@ In the following scenario, we will assume you just finished writing your awesome
 it's as easy as writing one Context class and registering it. That's it, you're done! Really! Here's an example
 
 ```java
-public class ItemDropperContext extends SimpleContext {
+public class ItemDropperContext extends ReportContext {
 
     public ItemDropperContext() {
         super("item-dropper-context", "Item Dropper"); // unique name, followed by a Human friendly title to represent the data output
     }
 
-    @Override public void run() {
-        append("drops", dropsCount);
+    @Override public void run(ReportContextEntry entry) {
+        entry.append("drops", getDropsCount()); // Appends getDropsCount() to the entry under the key 'drops'.
     }
 }
 ```
@@ -42,6 +42,9 @@ public class ItemDropperPlugin ... {
 ```
 
 And voilà! You just hooked into Supervisor... FOREVER!
+
+When appending to an Appendable (ReportContextEntry, ReportFile, etc.) the value may be of any type assuming the serializer can handle it.
+The JSON serializer is able to handle all primitive data types, Collections, Maps, and a few others. 
 
 ## Building
 
