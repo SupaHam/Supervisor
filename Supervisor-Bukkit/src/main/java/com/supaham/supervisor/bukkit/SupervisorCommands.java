@@ -62,7 +62,7 @@ public class SupervisorCommands {
         if (format != null) {
             OutputFormat outputFormat = OutputFormat.getByName(format);
             if (outputFormat == null) {
-                throw new CommandException("'" + format + "' is not a valid format.");
+                throw new SupervisorException("'" + format + "' is not a valid format.");
             }
             builder.format(outputFormat);
         }
