@@ -31,6 +31,7 @@ public final class ReportMetadataContext extends ReportContext {
     public final class ReportMetadataContextEntry extends AbstractReportContextEntry {
         
         private final Map<String, TaskTimings> contextMetadata = new LinkedHashMap<>();
+        protected Report report;
 
         public ReportMetadataContextEntry(@Nonnull ReportContext parentContext, @Nonnull ReportSpecifications reportSpecifications) {
             super(parentContext, reportSpecifications);
@@ -55,9 +56,9 @@ public final class ReportMetadataContext extends ReportContext {
         }
 
         private List<String> getContextNames() {
-            List<String> result = new ArrayList<>(getReportSpecifications().getContextRegistry().getContexts().size());
-            for (ReportContext context : getReportSpecifications().getContextRegistry().getContexts()) {
-                result.add(context.getName());
+            List<String> result = new ArrayList<>(report.size());
+            for (ReportContextEntry context : report) {
+                result.add(context.getParentContext().getName());
             }
             return result;
         }

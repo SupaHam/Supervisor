@@ -62,6 +62,7 @@ public class Report implements List<ReportContextEntry>, Callable<ReportResult> 
         // metadata is never added to the contexts to prevent the output
         ReportMetadataContext metadataCtx = new ReportMetadataContext();
         this.metadataContextEntry = (ReportMetadataContextEntry) metadataCtx.createEntry(this.reportSpecifications);
+        this.metadataContextEntry.report = this;
 
         ReportOutput output;
         ReportSerializer serializer = this.reportSpecifications.getReportSerializer();
