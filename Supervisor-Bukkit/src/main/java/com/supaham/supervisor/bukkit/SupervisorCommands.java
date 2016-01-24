@@ -4,6 +4,7 @@ import com.sk89q.minecraft.util.commands.Command;
 import com.sk89q.minecraft.util.commands.CommandException;
 import com.sk89q.worldedit.util.command.binding.Switch;
 import com.supaham.commons.utils.StringUtils;
+import com.supaham.supervisor.SupervisorException;
 import com.supaham.supervisor.report.OutputFormat;
 import com.supaham.supervisor.report.Report.ReportResult;
 import com.supaham.supervisor.report.ReportSpecifications.ReportSpecsBuilder;
@@ -24,7 +25,8 @@ public class SupervisorCommands {
                          @Switch('t') String title,
                          @Switch('f') String format,
                          @Switch('e') String excludesString,
-                         @Switch('i') String includesString) throws CommandException {
+                         @Switch('i') String includesString,
+                         @Switch('l') Integer reportLevel) throws SupervisorException {
         SupervisorPlugin plugin = SupervisorPlugin.get();
 
         if (version) {
@@ -65,6 +67,10 @@ public class SupervisorCommands {
                 throw new SupervisorException("'" + format + "' is not a valid format.");
             }
             builder.format(outputFormat);
+        }
+        
+        if (reportLevel != null) {
+            builder.reportLevel(reportLevel);
         }
 
         ReportResult result = SupervisorPlugin.createReport(builder.build()).call();
