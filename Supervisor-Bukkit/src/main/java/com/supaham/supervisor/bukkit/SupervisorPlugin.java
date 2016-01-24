@@ -11,6 +11,7 @@ import com.supaham.supervisor.bukkit.SupervisorSettings.Defaults;
 import com.supaham.supervisor.bukkit.contexts.BukkitServerInfoContext;
 import com.supaham.supervisor.bukkit.contexts.BukkitWorldsContext;
 import com.supaham.supervisor.bukkit.contexts.PluginsContext;
+import com.supaham.supervisor.contexts.LogContext;
 import com.supaham.supervisor.contexts.SystemPropertiesContext;
 import com.supaham.supervisor.report.ReportContext;
 import com.supaham.supervisor.report.ReportContextRegistry;
@@ -90,6 +91,7 @@ public class SupervisorPlugin extends SimpleCommonPlugin<SupervisorPlugin> {
         registerContext(this, new BukkitServerInfoContext());
         registerContext(this, new PluginsContext());
         registerContext(this, new BukkitWorldsContext());
+        registerContext(this, new LogContext());
     }
 
     /**
