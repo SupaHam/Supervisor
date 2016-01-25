@@ -20,14 +20,11 @@ public class BukkitServerInfoContext extends ServerInfoContext {
     private static Properties serverProperties;
 
     static {
-        try {
             Server server = Bukkit.getServer();
-            Object console = ReflectionUtils.getField(server.getClass(), "console").get(server);
-            Object propertyManager = ReflectionUtils.getMethod(console.getClass(), "getPropertyManager").invoke(console);
-            serverProperties = (Properties) ReflectionUtils.getField(propertyManager.getClass(), "properties").get(propertyManager);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
+//            Object console = ReflectionUtils.getField(server.getClass(), "console").get(server);
+//            Object propertyManager = ReflectionUtils.getMethod(console.getClass(), "getPropertyManager").invoke(console);
+//            serverProperties = (Properties) ReflectionUtils.getField(propertyManager.getClass(), "properties").get(propertyManager);
+            serverProperties = null;
     }
 
     private static final Pattern PATTERN = Pattern.compile(".*MC:\\s*(.*)\\s*\\)");
