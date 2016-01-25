@@ -5,7 +5,11 @@ import com.google.common.collect.ImmutableMap;
 import com.supaham.supervisor.report.ReportSpecifications.ReportLevel;
 import com.supaham.supervisor.utils.TaskTimings;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +45,7 @@ public final class ReportMetadataContext extends ReportContext {
         @Override public void run() {
             stop(this);
             append("uuid", UUID.randomUUID());
-            append("timings", getTimings());
+            append("timestamp", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
             append("specifications", ImmutableMap.builder()
                 .put("owner", getReportSpecifications().getOwner())
                 .put("title", getReportSpecifications().getTitle())
@@ -54,6 +58,7 @@ public final class ReportMetadataContext extends ReportContext {
                 .put("included_contexts", getContextNames())
                 .build()
             );
+            append("timings", getTimings());
         }
 
         private List<String> getContextNames() {
