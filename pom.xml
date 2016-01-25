@@ -26,8 +26,8 @@
             <url>http://maven.sk89q.com/repo/</url>
         </repository>
         <repository>
-            <id>elmakers</id>
-            <url>http://maven.elmakers.com/repository/</url>
+            <id>drtshock</id>
+            <url>http://ci.drtshock.net/plugin/repository/everything/</url>
         </repository>
     </repositories>
 
@@ -38,8 +38,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
         </plugins>

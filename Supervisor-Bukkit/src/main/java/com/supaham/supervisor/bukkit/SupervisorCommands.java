@@ -1,10 +1,12 @@
 package com.supaham.supervisor.bukkit;
 
 import com.sk89q.intake.Command;
+import com.sk89q.intake.CommandException;
 import com.sk89q.intake.Require;
 import com.sk89q.intake.parametric.annotation.Optional;
 import com.sk89q.intake.parametric.annotation.Switch;
 import com.sk89q.intake.parametric.annotation.Text;
+import com.supaham.commons.exceptions.CommonException;
 import com.supaham.commons.utils.StringUtils;
 import com.supaham.supervisor.SupervisorException;
 import com.supaham.supervisor.report.OutputFormat;
@@ -35,7 +37,7 @@ public class SupervisorCommands {
                          @Switch('f') String format,
                          @Switch('e') String excludesString,
                          @Switch('i') String includesString,
-                         @Switch('l') Integer reportLevel) throws SupervisorException {
+                         @Switch('l') Integer reportLevel) throws CommonException {
         SupervisorPlugin plugin = SupervisorPlugin.get();
 
         if (version) {
@@ -51,7 +53,7 @@ public class SupervisorCommands {
                     return;
                 }
 
-                if (SupervisorPlugin.get().loadSettings()) {
+                if (SupervisorPlugin.get().reloadSettings()) {
                     sender.sendMessage(ChatColor.GREEN + "You've successfully reloaded the Supervisor configuration file.");
                 } else {
                     sender.sendMessage(ChatColor.RED + "Failed to load configuration. Please check the console for errors.");
@@ -73,7 +75,7 @@ public class SupervisorCommands {
         if (format != null) {
             OutputFormat outputFormat = OutputFormat.getByName(format);
             if (outputFormat == null) {
-                throw new SupervisorException("'" + format + "' is not a valid format.");
+                throw new CommonException("'" + format + "' is not a valid format.");
             }
             builder.format(outputFormat);
         }

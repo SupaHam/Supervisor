@@ -5,6 +5,8 @@ import com.google.common.base.Preconditions;
 import com.supaham.commons.bukkit.SimpleCommonPlugin;
 import com.supaham.commons.bukkit.TickerTask;
 import com.supaham.commons.bukkit.commands.CommonCommandsManager;
+import com.supaham.commons.bukkit.commands.common.CommonCommands;
+import com.supaham.commons.bukkit.commands.utils.CommonCommandData;
 import com.supaham.commons.bukkit.utils.SerializationUtils;
 import com.supaham.supervisor.Supervisor;
 import com.supaham.supervisor.bukkit.SupervisorSettings.Defaults;
@@ -41,9 +43,6 @@ public class SupervisorPlugin extends SimpleCommonPlugin<SupervisorPlugin> {
 
     private static SupervisorPlugin instance;
 
-    private CommonCommandsManager commandsManager;
-
-    private SupervisorSettings settings = new SupervisorSettings();
     private BukkitContextRegistry contextRegistry;
     private Supervisor supervisor;
 
@@ -60,40 +59,25 @@ public class SupervisorPlugin extends SimpleCommonPlugin<SupervisorPlugin> {
     }
 
     public SupervisorPlugin() {
-        super(SupervisorPlugin.class, "sv");
         Preconditions.checkState(instance == null, "SupervisorPlugin already initialized.");
         instance = this;
+        setSettings(() -> new SupervisorSettings(this));
     }
 
     @Override public void onEnable() {
         super.onEnable();
-        if (!loadSettings()) {
+        if (!reloadSettings()) {
             return;
         }
 
-        this.commandsManager = new SupervisorCommandsManager(this);
+        getCommandsManager().builder().registerMethods(new SupervisorCommands());
+        CommonCommands.DEBUG.builder(this, "sv").register();
         this.contextRegistry = new BukkitContextRegistry();
         registerDefaultContexts();
         supervisor = new Supervisor(getLogger(), this.contextRegistry);
+        
 
-        new TickerTask(this, 1) {
-            @Override public void run() {
-                commandsManager.build();
-            }
-        }.start();
-    }
-    
-    public boolean loadSettings() {
-        YamlDataSource yaml;
-        try {
-            yaml = SerializationUtils.yaml(new File(getDataFolder(), "config.yml")).build();
-            SerializationUtils.loadOrCreateProperties(getLog(), yaml, this.settings);
-            yaml.save(this.settings);
-            return true;
-        } catch (IOException | SendablePluginBaseException e) {
-            e.printStackTrace();
-            return false;
-        }
+        new TickerTask(this, 1, getCommandsManager()::build).start();
     }
 
     private void registerDefaultContexts() {
@@ -127,13 +111,8 @@ public class SupervisorPlugin extends SimpleCommonPlugin<SupervisorPlugin> {
         getContextRegistry().register(owner, context);
     }
 
-    @Override
-    public CommonCommandsManager getCommandsManager() {
-        return commandsManager;
-    }
-
     public SupervisorSettings getSettings() {
-        return settings;
+        return (SupervisorSettings) super.getSettings();
     }
 
     public BukkitContextRegistry getContextRegistry() {

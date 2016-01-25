@@ -3,7 +3,7 @@ package com.supaham.supervisor.bukkit.contexts;
 import com.google.common.base.Preconditions;
 
 import com.supaham.commons.bukkit.players.Players;
-import com.supaham.commons.bukkit.utils.ReflectionUtils;
+import com.supaham.commons.utils.ReflectionUtils;
 import com.supaham.commons.utils.RuntimeUtils;
 import com.supaham.supervisor.contexts.ServerInfoContext;
 
