@@ -127,7 +127,7 @@ public class BukkitWorldsContext extends WorldsContext {
         @Override
         public Object getLoadedChunks() {
             // Else ifs with the higher report levels on top
-            if (this.entry.getReportLevel() >= ReportLevel.NORMAL) {
+            if (this.entry.getReportLevel() > ReportLevel.VERBOSE) {
                 List<int[]> list = new ArrayList<>();
                 for (Chunk chunk : this.bukkitWorld.getLoadedChunks()) {
                     list.add(new int[]{chunk.getX(), chunk.getZ()});
