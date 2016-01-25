@@ -18,7 +18,6 @@
         <main.class>${main.package}.SupervisorPlugin</main.class>
         <core.version>1.0-SNAPSHOT</core.version>
         <spigot-api.version>1.8.7-R0.1-SNAPSHOT</spigot-api.version>
-        <commons-bukkit.version>0.4.1-SNAPSHOT</commons-bukkit.version>
         <exhaust-bukkit.version>1.0.1-SNAPSHOT</exhaust-bukkit.version>
     </properties>
 
@@ -47,7 +46,7 @@
         <dependency>
             <groupId>com.supaham.commons</groupId>
             <artifactId>commons-bukkit</artifactId>
-            <version>${commons-bukkit.version}</version>
+            <version>${commons.version}</version>
         </dependency>
         <!--<dependency>
             <groupId>lc.vq</groupId>

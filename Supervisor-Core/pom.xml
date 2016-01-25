@@ -12,15 +12,11 @@
     <version>${supervisor.version}</version>
     <name>Supervisor-Core</name>
 
-    <properties>
-        <commons-core.version>0.4.1-SNAPSHOT</commons-core.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.supaham.commons</groupId>
             <artifactId>commons-core</artifactId>
-            <version>${commons-core.version}</version>
+            <version>${commons.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.mylyn.github</groupId>

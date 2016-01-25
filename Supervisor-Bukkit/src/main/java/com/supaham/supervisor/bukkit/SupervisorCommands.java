@@ -1,10 +1,10 @@
 package com.supaham.supervisor.bukkit;
 
-import com.sk89q.minecraft.util.commands.Command;
-import com.sk89q.minecraft.util.commands.CommandPermissions;
-import com.sk89q.worldedit.util.command.binding.Switch;
-import com.sk89q.worldedit.util.command.binding.Text;
-import com.sk89q.worldedit.util.command.parametric.Optional;
+import com.sk89q.intake.Command;
+import com.sk89q.intake.Require;
+import com.sk89q.intake.parametric.annotation.Optional;
+import com.sk89q.intake.parametric.annotation.Switch;
+import com.sk89q.intake.parametric.annotation.Text;
 import com.supaham.commons.utils.StringUtils;
 import com.supaham.supervisor.SupervisorException;
 import com.supaham.supervisor.report.OutputFormat;
@@ -21,14 +21,14 @@ import java.util.List;
 
 public class SupervisorCommands {
 
-    @Command(aliases = {"svreport", "sv"}, desc = "Generates a Supervisor report.", 
-        help = "-v displays version.\n" 
-            + "-t sets the report's title.\n" 
-            + "-f sets the output format of the report.\n" 
-            + "-e excludes named contexts from the report.\n" 
-            + "-i includes named contents in the report.\n" 
+    @Command(aliases = {"svreport", "sv"}, desc = "Generates a Supervisor report.",
+        help = "-v displays version.\n"
+            + "-t sets the report's title.\n"
+            + "-f sets the output format of the report.\n"
+            + "-e excludes named contexts from the report.\n"
+            + "-i includes named contents in the report.\n"
             + "-l sets the report output level (verboseness).")
-    @CommandPermissions("supervisor.use")
+    @Require("supervisor.use")
     public void svreport(CommandSender sender, @Optional @Text String argsString,
                          @Switch('v') boolean version,
                          @Switch('t') String title,
@@ -77,12 +77,12 @@ public class SupervisorCommands {
             }
             builder.format(outputFormat);
         }
-        
+
         if (reportLevel != null) {
             builder.reportLevel(reportLevel);
         }
-        
-        if(!args.isEmpty()) {
+
+        if (!args.isEmpty()) {
             builder.arguments(args);
         }
 

@@ -4,8 +4,8 @@ import com.google.common.base.Preconditions;
 
 import com.supaham.commons.bukkit.SimpleCommonPlugin;
 import com.supaham.commons.bukkit.TickerTask;
+import com.supaham.commons.bukkit.commands.CommonCommandsManager;
 import com.supaham.commons.bukkit.utils.SerializationUtils;
-import com.supaham.commons.bukkit.worldedit.CommandsManager;
 import com.supaham.supervisor.Supervisor;
 import com.supaham.supervisor.bukkit.SupervisorSettings.Defaults;
 import com.supaham.supervisor.bukkit.contexts.BukkitServerInfoContext;
@@ -21,6 +21,8 @@ import com.supaham.supervisor.report.Report;
 import com.supaham.supervisor.report.ReportSpecifications;
 import com.supaham.supervisor.report.ReportSpecifications.ReportSpecsBuilder;
 
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
@@ -39,7 +41,7 @@ public class SupervisorPlugin extends SimpleCommonPlugin<SupervisorPlugin> {
 
     private static SupervisorPlugin instance;
 
-    private CommandsManager commandsManager;
+    private CommonCommandsManager commandsManager;
 
     private SupervisorSettings settings = new SupervisorSettings();
     private BukkitContextRegistry contextRegistry;
@@ -76,7 +78,7 @@ public class SupervisorPlugin extends SimpleCommonPlugin<SupervisorPlugin> {
 
         new TickerTask(this, 1) {
             @Override public void run() {
-                commandsManager.registerCommands();
+                commandsManager.build();
             }
         }.start();
     }
@@ -125,7 +127,8 @@ public class SupervisorPlugin extends SimpleCommonPlugin<SupervisorPlugin> {
         getContextRegistry().register(owner, context);
     }
 
-    public CommandsManager getCommandsManager() {
+    @Override
+    public CommonCommandsManager getCommandsManager() {
         return commandsManager;
     }
 
