@@ -5,6 +5,7 @@ import com.supaham.supervisor.report.AbstractReportContextEntry;
 import com.supaham.supervisor.report.ReportContext;
 import com.supaham.supervisor.report.ReportContextEntry;
 import com.supaham.supervisor.report.ReportSpecifications;
+import com.supaham.supervisor.report.ReportSpecifications.ReportLevel;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,10 +34,12 @@ public class SupervisorContext extends ReportContext {
 
         @Override
         public void run() {
-            try {
-                createPlainTextFile("config.yml", "Supervisor Config").appendFile(new File(supervisorPlugin.getDataFolder(), "config.yml"));
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (getReportLevel() > ReportLevel.BRIEF) {
+                try {
+                    createPlainTextFile("config.yml", "Supervisor Config").appendFile(new File(supervisorPlugin.getDataFolder(), "config.yml"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
