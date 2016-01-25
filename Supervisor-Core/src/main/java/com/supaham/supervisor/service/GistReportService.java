@@ -36,7 +36,11 @@ public class GistReportService extends AbstractReportService {
                     ReportOutput output = reportResult.getOutput();
                     Map<String, GistFile> gists = new HashMap<>();
                     for (Entry<String, String> entry : output.getFiles().entrySet()) {
-                        gists.put(entry.getKey().replaceAll("/", "\\\\"), new GistFile().setContent(entry.getValue()));
+                        if(entry.getValue().isEmpty()) {
+                            getLogger().warning("File " + entry.getKey() + " is empty.");
+                        } else {
+                            gists.put(entry.getKey().replaceAll("/", "\\\\"), new GistFile().setContent(entry.getValue()));
+                        }
                     }
                     gist.setFiles(gists);
                     try{
