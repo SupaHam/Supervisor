@@ -29,6 +29,7 @@ import javax.annotation.Nonnull;
 
 import pluginbase.config.datasource.yaml.YamlDataSource;
 import pluginbase.logging.PluginLogger;
+import pluginbase.messages.messaging.SendablePluginBaseException;
 
 /**
  * Created by Ali on 14/10/2015.
@@ -82,10 +83,11 @@ public class SupervisorPlugin extends SimpleCommonPlugin<SupervisorPlugin> {
     public boolean loadSettings() {
         YamlDataSource yaml;
         try {
-            yaml = SerializationUtils.yaml(new File(getDataFolder(), "supervisor.yml")).build();
+            yaml = SerializationUtils.yaml(new File(getDataFolder(), "config.yml")).build();
             SerializationUtils.loadOrCreateProperties(getLog(), yaml, this.settings);
+            yaml.save(this.settings);
             return true;
-        } catch (IOException e) {
+        } catch (IOException | SendablePluginBaseException e) {
             e.printStackTrace();
             return false;
         }
