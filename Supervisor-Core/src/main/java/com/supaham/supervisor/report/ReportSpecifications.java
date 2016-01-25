@@ -2,6 +2,7 @@ package com.supaham.supervisor.report;
 
 import com.google.common.base.Preconditions;
 
+import com.supaham.commons.utils.CollectionUtils;
 import com.supaham.commons.utils.StringUtils;
 import com.supaham.supervisor.Supervisor;
 import com.supaham.supervisor.report.serializers.ReportSerializer;
@@ -31,14 +32,16 @@ public class ReportSpecifications {
     private final List<String> excludes;
     private final List<String> includes;
     private final ReportSerializer reportSerializer;
+    private List<String> arguments;
 
     public static ReportSpecsBuilder builder() {
         return new ReportSpecsBuilder();
     }
 
-    private ReportSpecifications(Supervisor supervisor, String owner, UUID uuid, ReportContextRegistry contextRegistry, String title, OutputFormat format,
+    private ReportSpecifications(Supervisor supervisor, String owner, UUID uuid, ReportContextRegistry contextRegistry, String title,
+                                 OutputFormat format,
                                  int reportLevel, Map<String, Integer> contextReportLevels, List<String> excludes, List<String> includes,
-                                 ReportSerializer reportSerializer) {
+                                 ReportSerializer reportSerializer, List<String> arguments) {
         this.supervisor = supervisor;
         this.owner = owner;
         this.uuid = uuid;
@@ -50,6 +53,7 @@ public class ReportSpecifications {
         this.excludes = excludes;
         this.includes = includes;
         this.reportSerializer = reportSerializer;
+        this.arguments = Collections.unmodifiableList(arguments);
     }
 
     public ReportSpecifications(@Nonnull ReportSpecifications reportSpecifications) {
@@ -125,6 +129,15 @@ public class ReportSpecifications {
         return reportSerializer;
     }
 
+    public List<String> getArguments() {
+        return arguments;
+    }
+    
+    public boolean hasArgument(@Nonnull String argument) {
+        Preconditions.checkNotNull(argument, "argument cannot be null.");
+        return CollectionUtils.containsIgnoreCase(this.arguments, argument);
+    }
+
     public static final class ReportLevel {
 
         public static int BRIEFEST = 0;
@@ -148,36 +161,37 @@ public class ReportSpecifications {
         private List<String> excludes;
         private List<String> includes;
         private ReportSerializer reportSerializer;
+        private List<String> arguments;
 
         private ReportSpecsBuilder() {
         }
 
-        public ReportSpecsBuilder supervisor(@Nonnull Supervisor supervisor) {
+        public ReportSpecsBuilder supervisor(Supervisor supervisor) {
             this.supervisor = supervisor;
             return this;
         }
 
-        public ReportSpecsBuilder owner(@Nonnull String owner) {
+        public ReportSpecsBuilder owner(String owner) {
             this.owner = owner;
             return this;
         }
 
-        public ReportSpecsBuilder supervisor(@Nonnull UUID uuid) {
+        public ReportSpecsBuilder supervisor(UUID uuid) {
             this.uuid = uuid;
             return this;
         }
 
-        public ReportSpecsBuilder contextRegistry(@Nonnull ReportContextRegistry contextRegistry) {
+        public ReportSpecsBuilder contextRegistry(ReportContextRegistry contextRegistry) {
             this.contextRegistry = contextRegistry;
             return this;
         }
 
-        public ReportSpecsBuilder title(@Nonnull String title) {
+        public ReportSpecsBuilder title(String title) {
             this.title = title;
             return this;
         }
 
-        public ReportSpecsBuilder format(@Nonnull OutputFormat format) {
+        public ReportSpecsBuilder format(OutputFormat format) {
             this.format = format;
             return this;
         }
@@ -188,12 +202,12 @@ public class ReportSpecifications {
             return this;
         }
 
-        public ReportSpecsBuilder contextReportLevels(@Nonnull Map<String, Integer> contextReportLevels) {
+        public ReportSpecsBuilder contextReportLevels(Map<String, Integer> contextReportLevels) {
             this.contextReportLevels = contextReportLevels;
             return this;
         }
 
-        public ReportSpecsBuilder contextReportLevel(@Nonnull String contextName, int reportLevel) {
+        public ReportSpecsBuilder contextReportLevel(String contextName, int reportLevel) {
             if (this.contextReportLevels == null) {
                 this.contextReportLevels = new HashMap<>();
             }
@@ -201,24 +215,30 @@ public class ReportSpecifications {
             return this;
         }
 
-        public ReportSpecsBuilder excludes(@Nonnull List<String> excludes) {
+        public ReportSpecsBuilder excludes(List<String> excludes) {
             this.excludes = excludes;
             return this;
         }
 
-        public ReportSpecsBuilder includes(@Nonnull List<String> includes) {
+        public ReportSpecsBuilder includes(List<String> includes) {
             this.includes = includes;
             return this;
         }
 
-        public ReportSpecsBuilder reportSerializer(@Nonnull ReportSerializer reportSerializer) {
+        public ReportSpecsBuilder reportSerializer(ReportSerializer reportSerializer) {
             this.reportSerializer = reportSerializer;
+            return this;
+        }
+
+        public ReportSpecsBuilder arguments(List<String> arguments) {
+            this.arguments = arguments;
             return this;
         }
 
         public ReportSpecsBuilder but() {
             return builder().owner(owner).contextRegistry(contextRegistry).title(title).format(format).reportLevel(reportLevel)
-                .contextReportLevels(contextReportLevels).excludes(excludes).includes(includes).reportSerializer(reportSerializer);
+                .contextReportLevels(contextReportLevels).excludes(excludes).includes(includes).reportSerializer(reportSerializer)
+                .arguments(arguments);
         }
 
         public ReportSpecifications build() {
@@ -240,8 +260,11 @@ public class ReportSpecifications {
             if (includes == null) {
                 includes = new ArrayList<>();
             }
+            if (arguments == null) {
+                arguments = new ArrayList<>();
+            }
             return new ReportSpecifications(supervisor, owner, uuid, contextRegistry, title, format, reportLevel, contextReportLevels, excludes, includes,
-                reportSerializer);
+                reportSerializer, arguments);
         }
     }
 }

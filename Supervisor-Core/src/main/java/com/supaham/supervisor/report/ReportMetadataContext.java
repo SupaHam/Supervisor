@@ -50,6 +50,7 @@ public final class ReportMetadataContext extends ReportContext {
                 .put("context_report_levels", getReportSpecifications().getContextReportLevels())
                 .put("excludes", getReportSpecifications().getExcludes())
                 .put("includes", getReportSpecifications().getIncludes())
+                .put("arguments", getReportSpecifications().getArguments())
                 .put("included_contexts", getContextNames())
                 .build()
             );

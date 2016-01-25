@@ -43,7 +43,7 @@ public class SupervisorCommands {
             return;
         }
 
-        String[] args = argsString == null ? new String[0] : argsString.split("\\s");
+        List<String> args = argsString == null ? Collections.<String>emptyList() : Arrays.asList(argsString.split("\\s"));
         for (String arg : args) {
             if ("reload".equals(arg.toLowerCase())) {
                 if (!sender.hasPermission("supervisor.reload")) {
@@ -80,6 +80,10 @@ public class SupervisorCommands {
         
         if (reportLevel != null) {
             builder.reportLevel(reportLevel);
+        }
+        
+        if(!args.isEmpty()) {
+            builder.arguments(args);
         }
 
         ReportResult result = SupervisorPlugin.createReport(builder.build()).call();
