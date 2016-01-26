@@ -9,7 +9,6 @@ import com.supaham.supervisor.report.ReportContext;
 import com.supaham.supervisor.report.ReportContextRegistry;
 import com.supaham.supervisor.report.ReportSpecifications;
 import com.supaham.supervisor.report.serializers.JsonReportSerializer;
-import com.supaham.supervisor.report.serializers.PrettyTxtReportSerializer;
 import com.supaham.supervisor.report.serializers.ReportSerializer;
 
 import java.util.HashMap;
@@ -34,7 +33,7 @@ public class Supervisor {
         for (ReportContext reportContext : specs.getContextRegistry().getSortedContexts()) {
             // If exclusions include this context, ignore it.
             if (CollectionUtils.containsIgnoreCase(specs.getExcludes(), reportContext.getName())) {
-               continue; 
+                continue;
             }
             // If inclusions were defined and this context is not within the inclusions, ignore it.
             if (!specs.getIncludes().isEmpty() && !CollectionUtils.containsIgnoreCase(specs.getIncludes(), reportContext.getName())) {
@@ -47,7 +46,6 @@ public class Supervisor {
 
     {
         this.defaultReportSerializers.put(OutputFormat.JSON, new JsonReportSerializer(this));
-        this.defaultReportSerializers.put(OutputFormat.PRETTY_TXT, new PrettyTxtReportSerializer(this));
     }
 
     public Supervisor(@Nonnull Logger logger, @Nonnull ReportContextRegistry contextRegistry) {

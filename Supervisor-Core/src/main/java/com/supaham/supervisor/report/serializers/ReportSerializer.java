@@ -1,5 +1,6 @@
 package com.supaham.supervisor.report.serializers;
 
+import com.supaham.supervisor.report.Amendable;
 import com.supaham.supervisor.report.OutputFormat;
 import com.supaham.supervisor.report.Report;
 import com.supaham.supervisor.report.ReportContextEntry;
@@ -12,7 +13,7 @@ public interface ReportSerializer {
 
     ReportOutput serialize(Report report);
 
-    Object serializeContext(Report report, ReportContextEntry contextEntry);
+    Object serializeAmendable(Report report, Amendable amendable);
 
     boolean isCompatibleWith(OutputFormat outputFormat);
 }

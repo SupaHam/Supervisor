@@ -4,8 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
 import com.supaham.supervisor.Supervisor;
+import com.supaham.supervisor.report.Amendable;
 import com.supaham.supervisor.report.OutputFormat;
 import com.supaham.supervisor.report.Report;
 import com.supaham.supervisor.report.ReportContextEntry;
@@ -14,10 +16,12 @@ import com.supaham.supervisor.report.ReportMetadataContext.ReportMetadataContext
 import com.supaham.supervisor.report.ReportOutput;
 import com.supaham.supervisor.report.ReportSpecifications;
 import com.supaham.supervisor.report.ReportSpecifications.ReportLevel;
+import com.supaham.supervisor.report.SimpleReportFile.PlainTextReportFile;
 import com.supaham.supervisor.report.formats.JSONFormat;
 
 import org.json.simple.JSONArray;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -61,7 +65,7 @@ public class JsonReportSerializer extends AbstractReportSerializer {
 
     @Override
     protected void each(int insertAt, ReportContextEntry contextEntry) {
-        Object serialized = serializeContext(getReport(), contextEntry);
+        Object serialized = serializeAmendable(getReport(), contextEntry);
         if (insertAt < 0) {
             root.add(serialized);
         } else {
@@ -70,8 +74,8 @@ public class JsonReportSerializer extends AbstractReportSerializer {
     }
 
     @Override
-    public Object serializeContext(Report report, ReportContextEntry contextEntry) {
-        return serialize(report, this.OUTPUT_FORMAT.getGson(), contextEntry);
+    public Object serializeAmendable(Report report, Amendable amendable) {
+        return serialize(report, this.OUTPUT_FORMAT.getGson(), amendable);
     }
 
     @Override
@@ -79,7 +83,15 @@ public class JsonReportSerializer extends AbstractReportSerializer {
         return this.OUTPUT_FORMAT.equals(outputFormat);
     }
 
-    private JsonObject serialize(Report report, Gson gson, ReportContextEntry contextEntry) {
+    private JsonElement serialize(Report report, Gson gson, Amendable amendable) {
+        if (amendable instanceof ReportContextEntry) {
+            return serialize(report, gson, (ReportContextEntry) amendable);
+        } else {
+            return gson.toJsonTree(amendable.getEntries());
+        }
+    }
+
+    private JsonElement serialize(Report report, Gson gson, ReportContextEntry contextEntry) {
         ReportSpecifications specs = report.getReportSpecifications();
 
         String name = contextEntry.getParentContext().getName();
@@ -107,7 +119,7 @@ public class JsonReportSerializer extends AbstractReportSerializer {
         try {
             // Only document files if it's not empty, or report level has been set to verbose (if empty).
             if (specs.getReportLevel() >= ReportLevel.VERBOSE || !contextEntry.getFiles().isEmpty()) {
-                contextOutput.add("files", filesToJson(report, contextEntry));
+                contextOutput.add("files", filesToJson(report, gson, contextEntry));
             }
 
             contextOutput.add("data", gson.toJsonTree(contextEntry.output()));
@@ -122,7 +134,7 @@ public class JsonReportSerializer extends AbstractReportSerializer {
         return contextOutput;
     }
 
-    private JsonElement filesToJson(Report report, ReportContextEntry contextEntry) {
+    private JsonElement filesToJson(Report report, Gson gson, ReportContextEntry contextEntry) {
         JsonArray array = new JsonArray();
         for (Entry<String, ReportFile> entry : contextEntry.getFiles().entrySet()) {
             JsonObject obj = new JsonObject();
@@ -130,7 +142,14 @@ public class JsonReportSerializer extends AbstractReportSerializer {
             obj.addProperty("path", path);
             obj.addProperty("title", entry.getValue().getFileTitle());
             array.add(obj);
-            this.files.put(path, entry.getValue().output().toString());
+            
+            String contents;
+            if (entry.getValue() instanceof PlainTextReportFile) {
+                contents = entry.getValue().output().toString();
+            } else {
+                contents = gson.toJson(serialize(report, gson, entry.getValue()));
+            }
+            this.files.put(path, contents);
         }
         return array;
     }
