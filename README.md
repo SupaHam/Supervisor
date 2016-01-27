@@ -8,6 +8,37 @@ more debuggable data to be provided when their users are prompted.
 With simplicity and lightweight being in mind, Supervisor only functions when you prompt it to, using the `svreport` command _short for 
 Supervisor Report_.
 
+The command takes a single collection of arguments. Alone, these arguments do nothing, but contexts may use these to manipulate the report. An example
+of a context that uses arguments is the PluginsContext which allows you to include a plugin's config.yml by typing `config/pluginname`.
+
+The command accepts flags ([See SupaHam's wiki for more information](https://wiki.supaham.com/Commands#Flags)) to modify the functionality of 
+the report.
+
+The following table shows the flags that are accepted by Supervisor:
+
+| flag | value  | description |
+| ---  | ---    | ---         |
+| -v   | N/A    | Displays the Supervisor version. |
+| -t   | String | Title of the report. This has no functionality other than maybe differentiating reports. |
+| -f   | String | Format the report should be written in. (There is only JSON unless you write a custom serializer) |
+| -e   | Strings | Contexts to exclude from the report, separated using `,`. e.g. `-e log`, ` -e log,anothercontext` |
+| -i   | Strings | Contexts to include in the report, separated using `,`. Excludes overrides this. e.g. `-e log`, ` -e log,anothercontext` |
+| -l   | Integer | Report level output. Default is 200 (BRIEF). |
+
+The following table shows examples of the possible command usages:
+
+| command                          | description |
+| -------------------------------- | ----------- |
+| /svreport                        | Generates a report with default settings. E.g. <https://gist.github.com/ff0a99061e6ca66108f4> |
+| /svreport -v                     | Sends a message similar to 'Supervisor v1.1-SNAPSHOT'. |
+| /svreport -t "My Amazing Report" | Generates a report with the title _My Amazing Report_. E.g. <https://gist.github.com/1178dac68be5be261f98> |
+| /svreport -f JSON                | Generates a report that is outputted in JSON format. E.g. <https://gist.github.com/1178dac68be5be261f98> |
+| /svreport -e log                 | Generates a report that excludes the `log` context. E.g. <https://gist.github.com/df1362d5616481c77ac7> |
+| /svreport -i log                 | Generates a report that includes only the `log` context. E.g. <https://gist.github.com/ffe6d0560b658d03c349> |
+| /svreport -l 0                   | Generates a report on the briefest level. E.g. <https://gist.github.com/920f43e8404ce39c5dc8> |
+| /svreport -i log -e log          | Generates a report that both includes AND excludes the `log` context. E.g. <https://gist.github.com/3b7e5fd09ae202e3e67d> |
+| /svreport -l 4000                | Generates a report with the output level of 4000 (CRAZY VERBOSE!). E.g. <https://gist.github.com/86280e6f172aa1d8d932> |
+
 [Here](https://gist.github.com/anonymous/450605c76428f1a72326)'s an example of a JSON report outputted in JSON format instantly shared using the Gist service!
 
 ## API
