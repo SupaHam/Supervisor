@@ -1,21 +1,33 @@
 package com.supaham.supervisor.bukkit.contexts;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+
 import com.supaham.commons.utils.CollectionUtils;
 import com.supaham.commons.utils.MapBuilder;
 import com.supaham.supervisor.report.ReportContext;
 import com.supaham.supervisor.report.ReportContextEntry;
+import com.supaham.supervisor.report.ReportFile;
 import com.supaham.supervisor.report.ReportSpecifications.ReportLevel;
 
 import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.RegisteredListener;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class PluginsContext extends ReportContext {
 
@@ -49,6 +61,10 @@ public class PluginsContext extends ReportContext {
             }
         }
         entry.append("plugins", plugins);
+        
+        if (entry.getReportLevel() >= ReportLevel.NORMAL) {
+            listeners(entry);
+        }
     }
 
     private Object pluginToMap(ReportContextEntry entry, Plugin plugin) {
@@ -74,5 +90,31 @@ public class PluginsContext extends ReportContext {
             map.put("permissions", desc.getPermissions());
         }
         return map;
+    }
+
+    private void listeners(ReportContextEntry entry) {
+        ReportFile file = entry.createFile("registered-listeners", "Registered Listeners");
+        for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+            List<Object> result = new ArrayList<>();
+            List<Listener> pluginListeners = HandlerList.getRegisteredListeners(plugin).stream()
+                .map(RegisteredListener::getListener).distinct()
+                .collect(Collectors.toList());
+            for (Listener listener : pluginListeners) {
+                List<Object> methods = new ArrayList<>();
+                for (Method method : listener.getClass().getDeclaredMethods()) {
+                    EventHandler annotation = method.getDeclaredAnnotation(EventHandler.class);
+                    if (annotation != null && method.getParameterCount() == 1) {
+                        methods.add(ImmutableMap.of(
+                            "method", method.getName(),
+                            "event", method.getParameters()[0].getType().getName(),
+                            "priority", annotation.priority(),
+                            "ignoreCancelled", annotation.ignoreCancelled()));
+                    }
+                }
+                result.add(Collections.singletonMap(listener.getClass().getName(), methods));
+            }
+//            result.entrySet().stream().map(e -> new );
+            file.append(plugin.getName(), result);
+        }
     }
 }
