@@ -58,7 +58,11 @@ public class JsonReportSerializer extends AbstractReportSerializer {
     protected ReportOutput toOutput() {
         ReportOutput reportOutput = new ReportOutput(getReport().getReportSpecifications().getFormat(), OUTPUT_FORMAT.getGson().toJson(root));
         for (Entry<String, String> entry : files.entrySet()) {
-            reportOutput.addFileWithExactName(entry.getKey(), entry.getValue());
+            String name = entry.getKey();
+            if (!name.contains(".")) { // TODO "Temporary" hack for adding extensions for extension-less files.
+                name += "." + OUTPUT_FORMAT.getExtensionType();
+            }
+            reportOutput.addFileWithExactName(name, entry.getValue());
         }
         return reportOutput;
     }
