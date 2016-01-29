@@ -4,37 +4,27 @@ import com.google.common.base.Preconditions;
 
 import com.supaham.commons.bukkit.SimpleCommonPlugin;
 import com.supaham.commons.bukkit.TickerTask;
-import com.supaham.commons.bukkit.commands.CommonCommandsManager;
 import com.supaham.commons.bukkit.commands.common.CommonCommands;
-import com.supaham.commons.bukkit.commands.utils.CommonCommandData;
-import com.supaham.commons.bukkit.utils.SerializationUtils;
 import com.supaham.supervisor.Supervisor;
 import com.supaham.supervisor.bukkit.SupervisorSettings.Defaults;
 import com.supaham.supervisor.bukkit.contexts.BukkitServerInfoContext;
 import com.supaham.supervisor.bukkit.contexts.BukkitWorldsContext;
-import com.supaham.supervisor.bukkit.contexts.PluginsContext;
 import com.supaham.supervisor.bukkit.contexts.LogContext;
+import com.supaham.supervisor.bukkit.contexts.PluginsContext;
 import com.supaham.supervisor.bukkit.contexts.SupervisorContext;
 import com.supaham.supervisor.contexts.SystemPropertiesContext;
-import com.supaham.supervisor.report.ReportContext;
-import com.supaham.supervisor.report.ReportContextRegistry;
 import com.supaham.supervisor.report.OutputFormat;
 import com.supaham.supervisor.report.Report;
+import com.supaham.supervisor.report.ReportContext;
+import com.supaham.supervisor.report.ReportContextRegistry;
 import com.supaham.supervisor.report.ReportSpecifications;
 import com.supaham.supervisor.report.ReportSpecifications.ReportSpecsBuilder;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
-
-import java.io.File;
-import java.io.IOException;
 
 import javax.annotation.Nonnull;
 
-import pluginbase.config.datasource.yaml.YamlDataSource;
 import pluginbase.logging.PluginLogger;
-import pluginbase.messages.messaging.SendablePluginBaseException;
 
 /**
  * Created by Ali on 14/10/2015.
@@ -64,9 +54,11 @@ public class SupervisorPlugin extends SimpleCommonPlugin<SupervisorPlugin> {
         setSettings(() -> new SupervisorSettings(this));
     }
 
-    @Override public void onEnable() {
+    @Override
+    public void onEnable() {
         super.onEnable();
         if (!reloadSettings()) {
+            getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
@@ -75,8 +67,11 @@ public class SupervisorPlugin extends SimpleCommonPlugin<SupervisorPlugin> {
         this.contextRegistry = new BukkitContextRegistry();
         registerDefaultContexts();
         supervisor = new Supervisor(getLogger(), this.contextRegistry);
-        
 
+        if (!enableMetrics()) {
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
         new TickerTask(this, 1, getCommandsManager()::build).start();
     }
 
