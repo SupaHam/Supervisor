@@ -16,7 +16,7 @@
     </modules>
     
     <properties>
-        <supervisor.version>1.1</supervisor.version>
+        <supervisor.version>1.2-SNAPSHOT</supervisor.version>
         <commons.version>0.5.1-SNAPSHOT</commons.version>
     </properties>
 
