@@ -1,6 +1,6 @@
 name: "${plugin.name}"
 main: "${main.class}"
-version: "${version}"
+version: "${project.version}-git-${git.commit.id.abbrev}"
 load: STARTUP
 authors: [SupaHam]
 website: http://github.com/SupaHam/Supervisor
