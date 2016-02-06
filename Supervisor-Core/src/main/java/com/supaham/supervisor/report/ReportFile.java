@@ -40,4 +40,11 @@ public interface ReportFile extends Amendable {
      */
     @Nonnull
     ReportContextEntry getContextEntry();
+
+    /**
+     * @see {@link ReportContextEntry#getReportLevel()}
+     */
+    default int getReportLevel() {
+        return getContextEntry().getReportLevel();
+    }
 }
