@@ -31,6 +31,7 @@
             <groupId>com.supaham.commons</groupId>
             <artifactId>commons-bukkit</artifactId>
             <version>${commons.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.supaham.supervisor</groupId>
@@ -66,6 +67,16 @@
                                 </includes>
                             </artifactSet>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.supaham.commons</pattern>
+                                    <shadedPattern>com.supaham.supervisor.internal.commons</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>pluginbase</pattern>
+                                    <shadedPattern>com.supaham.supervisor.internal.pluginbase</shadedPattern>
+                                </relocation>
+                            </relocations>
                         </configuration>
                     </execution>
                 </executions>
