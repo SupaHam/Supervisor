@@ -175,7 +175,7 @@ public abstract class AbstractReportContextEntry implements ReportContextEntry {
         this.files.put(fileName, reportFile);
         return reportFile;
     }
-    
+
     /**
      * Creates and returns a new {@link SimpleReportFile} that is named and titled.
      *
@@ -192,6 +192,16 @@ public abstract class AbstractReportContextEntry implements ReportContextEntry {
         Preconditions.checkArgument(!this.files.containsKey(fileName), fileName + " already exists and cannot be overridden");
 
         PlainTextReportFile reportFile = new PlainTextReportFile(this, fileName, fileTitle);
+        this.files.put(fileName, reportFile);
+        return reportFile;
+    }
+
+    @Override
+    public <T extends ReportFile> T addFile(@Nonnull T reportFile) {
+        Preconditions.checkNotNull(reportFile, "reportFile cannot be null.");
+        String fileName = reportFile.getFileName();
+        Preconditions.checkArgument(!this.files.containsKey(fileName), fileName + " already exists and cannot be overridden");
+        
         this.files.put(fileName, reportFile);
         return reportFile;
     }

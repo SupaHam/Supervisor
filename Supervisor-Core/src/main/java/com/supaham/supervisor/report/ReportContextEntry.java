@@ -49,6 +49,18 @@ public interface ReportContextEntry extends Runnable, Amendable {
     @Nonnull
     PlainTextReportFile createPlainTextFile(@Nonnull String fileName, String fileTitle);
 
+    /**
+     * Adds a {@link ReportFile} extension instance to this context. Typically used in this context would be an extension of {@link SimpleReportFile}
+     * as it removes most boilerplate.
+     *
+     * @param reportFile report file to add
+     * @param <T> type of report file to add and return
+     *
+     * @return the same {@code reportFile} for possible chaining
+     * @throws IllegalArgumentException thrown if the {@link ReportFile#getFileName()} already exists in this context
+     */
+    <T extends ReportFile> T addFile(@Nonnull T reportFile) throws IllegalArgumentException;
+
     @Nonnull
     Map<String, ReportFile> getFiles();
 
