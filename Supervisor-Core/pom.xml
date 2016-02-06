@@ -17,7 +17,6 @@
             <groupId>com.supaham.commons</groupId>
             <artifactId>commons-core</artifactId>
             <version>${commons.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.mylyn.github</groupId>
@@ -25,7 +24,7 @@
             <version>2.1.5</version>
         </dependency>
     </dependencies>
-    
+
     <build>
         <plugins>
             <plugin>
