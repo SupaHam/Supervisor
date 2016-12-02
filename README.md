@@ -1,5 +1,4 @@
-[![Build Status](https://ci.drtshock.net/view/All/job/Supervisor/badge/icon)](https://ci.drtshock.net/view/All/job/Supervisor/)
-# Supervisor
+# Supervisor [![Build Status](https://ci.ender.zone/view/All/job/Supervisor/badge/icon)](https://ci.ender.zone/view/All/job/Supervisor/)
 
 Supervisor is the ultimate lightweight plugin for debugging your Bukkit server. With its extensive API developers can easily hook into Supervisor to add 
 more debuggable data to be provided when their users are prompted.
