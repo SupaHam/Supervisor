@@ -23,22 +23,35 @@ import java.util.List;
 
 public class SupervisorCommands {
 
-    @Command(aliases = {"svreport", "sv"}, desc = "Generates a Supervisor report.",
-        help = "-v displays version.\n"
-            + "-t sets the report's title.\n"
-            + "-f sets the output format of the report.\n"
-            + "-e excludes named contexts from the report.\n"
-            + "-i includes named contents in the report.\n"
-            + "-l sets the report output level (verboseness).")
+    private static final String HELP = "/<command> [flags] [help/reload]\n" 
+        + "Flags:\n" 
+        + "  -h displays help menu.\n"
+        + "  -v displays version.\n"
+        + "  -t sets the report's title.\n"
+        + "  -f sets the output format of the report.\n"
+        + "  -e <context...> excludes named contexts from the report.\n"
+        + "  -i <context...> includes named contexts in the report.\n"
+        + "  -l sets the report output level (verboseness).";
+
+    @Command(aliases = {"svreport", "sv", "supervisor"}, desc = "Generates a Supervisor report.",
+        help = HELP)
     @Require("supervisor.use")
     public void svreport(CommandSender sender, @Optional @Text String argsString,
                          @Switch('v') boolean version,
+                         @Switch('h') boolean help,
                          @Switch('t') String title,
                          @Switch('f') String format,
                          @Switch('e') String excludesString,
                          @Switch('i') String includesString,
                          @Switch('l') Integer reportLevel) throws CommonException {
         SupervisorPlugin plugin = SupervisorPlugin.get();
+
+        argsString = StringUtils.trimToNull(argsString);
+        if (help || "help".equalsIgnoreCase(argsString) || "?".equalsIgnoreCase(argsString)) {
+            sender.sendMessage(ChatColor.GREEN + ChatColor.BOLD.toString() + "Supervisor");
+            sender.sendMessage(HELP);
+            return;
+        }
 
         if (version) {
             sender.sendMessage(ChatColor.GREEN + "Supervisor v" + plugin.getDescription().getVersion());
