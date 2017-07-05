@@ -1,12 +1,14 @@
 package com.supaham.supervisor.bukkit.monitoring;
 
-import com.sk89q.intake.Command;
-import com.sk89q.intake.Require;
 import com.supaham.commons.bukkit.modules.CommonModule;
 import com.supaham.commons.state.State;
 import com.supaham.supervisor.bukkit.SupervisorPlugin;
 
 import org.bukkit.command.CommandSender;
+
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.CommandPermission;
 
 public class Monitor extends CommonModule {
 
@@ -24,15 +26,18 @@ public class Monitor extends CommonModule {
         this.uptimeMonitor = new UptimeMonitor(this);
         registerTask(this.tpsMonitor);
 
-        SupervisorPlugin.get().getCommandsManager().builder().registerMethods(this);
+        SupervisorPlugin.get().getCommandsManager().registerCommand(new MonitorCommands());
         setState(State.ACTIVE);
     }
+    
+    public class MonitorCommands extends BaseCommand {
 
-    @Command(aliases = {"nm", "tps", "monitor", "mem", "memory"}, desc = "Print performance monitor.")
-    @Require("nucleus.monitor")
-    public void nm(CommandSender sender) {
-        this.memoryMonitor.send(sender);
-        this.tpsMonitor.send(sender);
-        this.uptimeMonitor.send(sender);
+        @CommandAlias("nm|tps|monitor|mem|memory")
+        @CommandPermission("nucleus.monitor")
+        public void nm(CommandSender sender) {
+            Monitor.this.memoryMonitor.send(sender);
+            Monitor.this.tpsMonitor.send(sender);
+            Monitor.this.uptimeMonitor.send(sender);
+        }
     }
 }

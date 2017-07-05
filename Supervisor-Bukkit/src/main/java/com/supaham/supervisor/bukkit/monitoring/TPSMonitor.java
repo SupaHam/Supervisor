@@ -4,9 +4,14 @@ import com.google.common.base.Strings;
 
 import com.supaham.commons.bukkit.Colors;
 import com.supaham.commons.bukkit.TickerTask;
-import com.supaham.commons.bukkit.text.FancyMessage;
-import com.supaham.commons.bukkit.text.MessagePart;
+import com.supaham.commons.bukkit.utils.ChatUtils;
 import com.supaham.commons.bukkit.utils.EventUtils;
+
+import net.kyori.text.Component;
+import net.kyori.text.TextComponent;
+import net.kyori.text.event.HoverEvent;
+import net.kyori.text.event.HoverEvent.Action;
+import net.kyori.text.format.TextColor;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -37,7 +42,8 @@ public class TPSMonitor extends TickerTask implements Meterable {
         this.interval = interval;
     }
 
-    @Override public void run() {
+    @Override
+    public void run() {
         long currTime = System.currentTimeMillis();
 
         long spentTime = (currTime - this.lastCall) / 1000L;
@@ -55,20 +61,24 @@ public class TPSMonitor extends TickerTask implements Meterable {
         this.lastCall = System.currentTimeMillis();
     }
 
-    public FancyMessage getMeter() {
+    public Component getMeter() {
         return getMeter(false); // TODO configure
     }
 
-    public FancyMessage getMeter(boolean averageTPS) {
-        FancyMessage message = new FancyMessage();
+    public Component getMeter(boolean averageTPS) {
         final float avgTPS = getAverageTps();
         float tps = averageTPS ? avgTPS : this.tps;
         int tpsAmount = (int) (tps / MAX_TPS * Monitor.METER_LENGTH);
-        MessagePart tooltip = new MessagePart();
-        tooltip.tooltip(Colors._yellow("Last TPS: ").blue(this.tps + " TPS").toString(),
-            Colors._yellow("Avg. TPS: ").blue(avgTPS + " TPS").toString());
-        message.append(Strings.repeat(Monitor.METER_CHAR, tpsAmount)).color(ChatColor.GREEN).applyHoverEvent(tooltip);
-        message.append(Strings.repeat(Monitor.METER_CHAR, Monitor.METER_LENGTH - tpsAmount)).color(ChatColor.RED).applyHoverEvent(tooltip);
+        HoverEvent hoverEvent;
+        {
+            TextComponent text =
+                TextComponent.of("Last TPS: ").color(TextColor.YELLOW).append(TextComponent.of(this.tps + " TPS \n").color(TextColor.BLUE))
+                    .append(TextComponent.of("Avg. TPS: ").color(TextColor.YELLOW).append(TextComponent.of(avgTPS + " TPS").color(TextColor.BLUE)));
+            hoverEvent = new HoverEvent(Action.SHOW_TEXT, text);
+        }
+        Component message = TextComponent.of(Strings.repeat(Monitor.METER_CHAR, tpsAmount)).color(TextColor.GREEN).hoverEvent(hoverEvent)
+            .append(TextComponent.of(Strings.repeat(Monitor.METER_CHAR, Monitor.METER_LENGTH - tpsAmount)).color(TextColor.RED)
+                .hoverEvent(hoverEvent));
         return message;
     }
 
@@ -91,8 +101,12 @@ public class TPSMonitor extends TickerTask implements Meterable {
 
     public void send(CommandSender sender) {
         if (sender instanceof Player) {
-            FancyMessage message = new FancyMessage().safeAppend("[&eTPS&r]: [").append(getMeter()).safeAppend("&r]");
-            message.send(sender);
+            TextComponent component = TextComponent.of("[")
+                .append(TextComponent.of("TPS").color(TextColor.YELLOW).content("TPS"))
+                .append(ChatUtils.forceResetStyles(TextComponent.of("]: [")))
+                .append(getMeter())
+                .append(ChatUtils.forceResetStyles(TextComponent.of("]")));
+            ChatUtils.sendComponent(sender, component);
         } else {
             sender.sendMessage("[TPS]:");
             sender.sendMessage("  Last TPS: " + this.tps);

@@ -1,14 +1,10 @@
 package com.supaham.supervisor.bukkit;
 
-import com.sk89q.intake.Command;
-import com.sk89q.intake.CommandException;
-import com.sk89q.intake.Require;
-import com.sk89q.intake.parametric.annotation.Optional;
-import com.sk89q.intake.parametric.annotation.Switch;
-import com.sk89q.intake.parametric.annotation.Text;
+import com.supaham.commons.bukkit.commands.flags.Flag;
+import com.supaham.commons.bukkit.commands.flags.FlagParseResult;
+import com.supaham.commons.bukkit.commands.flags.FlagParser;
 import com.supaham.commons.exceptions.CommonException;
 import com.supaham.commons.utils.StringUtils;
-import com.supaham.supervisor.SupervisorException;
 import com.supaham.supervisor.report.OutputFormat;
 import com.supaham.supervisor.report.Report.ReportResult;
 import com.supaham.supervisor.report.ReportSpecifications.ReportSpecsBuilder;
@@ -21,10 +17,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class SupervisorCommands {
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.CommandPermission;
+import co.aikar.commands.annotation.Optional;
 
-    private static final String HELP = "/<command> [flags] [help/reload]\n" 
-        + "Flags:\n" 
+public class SupervisorCommands extends BaseCommand {
+
+    private static final String HELP = "/<command> [flags] [help/reload]\n"
+        + "Flags:\n"
         + "  -h displays help menu.\n"
         + "  -v displays version.\n"
         + "  -t sets the report's title.\n"
@@ -33,32 +34,40 @@ public class SupervisorCommands {
         + "  -i <context...> includes named contexts in the report.\n"
         + "  -l sets the report output level (verboseness).";
 
-    @Command(aliases = {"svreport", "sv", "supervisor"}, desc = "Generates a Supervisor report.",
-        help = HELP)
-    @Require("supervisor.use")
-    public void svreport(CommandSender sender, @Optional @Text String argsString,
-                         @Switch('v') boolean version,
-                         @Switch('h') boolean help,
-                         @Switch('t') String title,
-                         @Switch('f') String format,
-                         @Switch('e') String excludesString,
-                         @Switch('i') String includesString,
-                         @Switch('l') Integer reportLevel) throws CommonException {
-        SupervisorPlugin plugin = SupervisorPlugin.get();
+    private FlagParser flags = new FlagParser();
 
-        argsString = StringUtils.trimToNull(argsString);
-        if (help || "help".equalsIgnoreCase(argsString) || "?".equalsIgnoreCase(argsString)) {
+    {
+        flags.add(new Flag('v', "version", true, false));
+        flags.add(new Flag('h', "help", true, false));
+        flags.add(new Flag('t', "title", true, true));
+        flags.add(new Flag('f', "format", true, true));
+        flags.add(new Flag('e', "excludes", true, true));
+        flags.add(new Flag('i', "includes", true, true));
+        flags.add(new Flag('l', "report-level", true, true));
+    }
+
+    @CommandAlias("svreport|sv|supervisor")
+    @CommandPermission("supervisor.use")
+    public void svreport(CommandSender sender, @Optional String[] args) throws CommonException {
+        SupervisorPlugin plugin = SupervisorPlugin.get();
+        FlagParseResult flags = this.flags.parseFor(sender, args);
+        if (flags == null) {
+            return; // Sender already notified
+        }
+        args = flags.getArgs(); // Update args after flag parsing
+
+        if (flags.contains('h') || (args.length == 1
+            && (args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("?")))) {
             sender.sendMessage(ChatColor.GREEN + ChatColor.BOLD.toString() + "Supervisor");
             sender.sendMessage(HELP);
             return;
         }
 
-        if (version) {
+        if (flags.contains('v')) {
             sender.sendMessage(ChatColor.GREEN + "Supervisor v" + plugin.getDescription().getVersion());
             return;
         }
 
-        List<String> args = argsString == null ? Collections.<String>emptyList() : Arrays.asList(argsString.split("\\s"));
         for (String arg : args) {
             if ("reload".equals(arg.toLowerCase())) {
                 if (!sender.hasPermission("supervisor.reload")) {
@@ -75,17 +84,18 @@ public class SupervisorCommands {
             }
         }
 
-        excludesString = StringUtils.stripToNull(excludesString);
-        includesString = StringUtils.stripToNull(includesString);
+        String excludesString = StringUtils.stripToNull(flags.get('e'));
+        String includesString = StringUtils.stripToNull(flags.get('i'));
 
-        List<String> excludes = excludesString == null ? Collections.<String>emptyList() : Arrays.asList(excludesString.split("\\s+|,"));
-        List<String> includes = includesString == null ? Collections.<String>emptyList() : Arrays.asList(includesString.split("\\s+|,"));
+        List<String> excludes = excludesString == null ? Collections.emptyList() : Arrays.asList(excludesString.split("\\s+|,"));
+        List<String> includes = includesString == null ? Collections.emptyList() : Arrays.asList(includesString.split("\\s+|,"));
 
         ReportSpecsBuilder builder = plugin.createDefaultBuilder().excludes(excludes).includes(includes);
-        if (title != null) {
-            builder.title(title);
+        if (flags.contains('t')) {
+            builder.title(flags.get('t'));
         }
-        if (format != null) {
+        if (flags.contains('f')) {
+            String format = flags.get('f');
             OutputFormat outputFormat = OutputFormat.getByName(format);
             if (outputFormat == null) {
                 throw new CommonException("'" + format + "' is not a valid format.");
@@ -93,12 +103,12 @@ public class SupervisorCommands {
             builder.format(outputFormat);
         }
 
-        if (reportLevel != null) {
-            builder.reportLevel(reportLevel);
+        if (flags.contains('l')) {
+            builder.reportLevel(Integer.parseInt(flags.get('l')));
         }
 
-        if (!args.isEmpty()) {
-            builder.arguments(args);
+        if (args.length > 0) {
+            builder.arguments(Arrays.asList(args));
         }
 
         ReportResult result = SupervisorPlugin.createReport(builder.build()).call();

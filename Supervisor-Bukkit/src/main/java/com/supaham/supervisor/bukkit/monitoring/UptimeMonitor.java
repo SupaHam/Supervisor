@@ -1,7 +1,11 @@
 package com.supaham.supervisor.bukkit.monitoring;
 
-import com.supaham.commons.bukkit.text.FancyMessage;
+import com.supaham.commons.bukkit.utils.ChatUtils;
 import com.supaham.commons.utils.TimeUtils;
+
+import net.kyori.text.Component;
+import net.kyori.text.TextComponent;
+import net.kyori.text.format.TextColor;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -28,19 +32,22 @@ public class UptimeMonitor {
 
     public void send(CommandSender sender) {
         if (sender instanceof Player) {
-            final FancyMessage message = new FancyMessage().safeAppend("[&eUptime&r]: ");
             final long uptime = getUptimeSeconds();
-            ChatColor color;
+            TextColor color;
             if(TimeUnit.SECONDS.toHours(uptime) < 12) {
-                color = ChatColor.GREEN;
+                color = TextColor.GREEN;
             } else if(TimeUnit.SECONDS.toHours(uptime) < 24) {
-                color = ChatColor.DARK_GREEN;
+                color = TextColor.DARK_GREEN;
             } else if(TimeUnit.SECONDS.toDays(uptime) <= 1) {
-                color = ChatColor.RED;
+                color = TextColor.RED;
             } else {
-                color = ChatColor.DARK_RED;
+                color = TextColor.DARK_RED;
             }
-            message.then(getReadableUptime()).color(color).send(sender);
+            Component component = TextComponent.of("[")
+                .append(TextComponent.of("Uptime").color(TextColor.YELLOW))
+                .append(ChatUtils.forceResetStyles(TextComponent.of("]: ")))
+                .append(TextComponent.of(getReadableUptime()).color(color));
+            ChatUtils.sendComponent(sender, component);
         } else {
             sender.sendMessage("[Uptime]: " + getReadableUptime());
         }

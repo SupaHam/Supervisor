@@ -77,7 +77,6 @@ public class PluginsContext extends ReportContext {
             .put("description", desc.getDescription())
             .put("website", desc.getWebsite())
             .put("prefix", desc.getPrefix())
-            .put("database", desc.isDatabaseEnabled())
             .put("load", desc.getLoad())
             .put("default-permission", desc.getPermissionDefault())
             .put("awareness", desc.getAwareness())

@@ -1,11 +1,11 @@
 package com.supaham.supervisor.bukkit.monitoring;
 
-import com.supaham.commons.bukkit.text.FancyMessage;
+import net.kyori.text.Component;
 
 /**
- * Represents an object that can be represented as a meter in the form of a {@link FancyMessage}.
+ * Represents an object that can be represented as a meter in the form of a {@link Component}.
  */
 public interface Meterable {
 
-    FancyMessage getMeter();
+    Component getMeter();
 }

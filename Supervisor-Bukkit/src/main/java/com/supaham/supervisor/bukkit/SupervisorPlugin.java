@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 
 import com.supaham.commons.bukkit.SimpleCommonPlugin;
 import com.supaham.commons.bukkit.TickerTask;
-import com.supaham.commons.bukkit.commands.common.CommonCommands;
 import com.supaham.supervisor.Supervisor;
 import com.supaham.supervisor.bukkit.SupervisorSettings.Defaults;
 import com.supaham.supervisor.bukkit.contexts.BukkitServerInfoContext;
@@ -62,8 +61,7 @@ public class SupervisorPlugin extends SimpleCommonPlugin<SupervisorPlugin> {
             return;
         }
 
-        getCommandsManager().builder().registerMethods(new SupervisorCommands());
-        CommonCommands.DEBUG.builder(this, "sv").register();
+        getCommandsManager().registerCommand(new SupervisorCommands());
         this.contextRegistry = new BukkitContextRegistry();
         registerDefaultContexts();
         supervisor = new Supervisor(getLogger(), this.contextRegistry);
@@ -72,7 +70,6 @@ public class SupervisorPlugin extends SimpleCommonPlugin<SupervisorPlugin> {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        new TickerTask(this, 1, getCommandsManager()::build).start();
     }
 
     private void registerDefaultContexts() {
